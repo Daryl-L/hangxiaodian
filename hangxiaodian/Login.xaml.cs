@@ -1,4 +1,5 @@
-﻿using System;
+﻿using hangxiaodian.Helper;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,7 +39,44 @@ namespace hangxiaodian
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var statusBar = StatusBar.GetForCurrentView();
-            statusBar.ForegroundColor = Color.FromArgb(0, 0, 0, 0);
+            statusBar.ForegroundColor = Color.FromArgb(0, 255, 0, 0);
+        }
+
+        private async void button_Click(object sender, RoutedEventArgs e)
+        {
+            string stuNo = tbxStuNo.Text;
+            string stuPwd = tbxStuPwd.Password;
+            if (stuNo == "")
+            {
+                await new MessageDialog("请输入学号").ShowAsync();
+                return;
+            }
+            var param = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("username", stuNo),
+                new KeyValuePair<string, string>("pwd", stuPwd)
+            };
+            var httpRequest = new HttpRequestHelper("http://incareer.hdu.edu.cn/m/p/telnet", Windows.Web.Http.HttpMethod.Post, param);
+            string res = string.Empty;
+            var statusBar = StatusBar.GetForCurrentView();
+            statusBar.ProgressIndicator.ProgressValue = null;
+            statusBar.ProgressIndicator.Text = "正在登录";
+            await statusBar.ProgressIndicator.ShowAsync();
+            try
+            {
+                res = await httpRequest.Request();
+            }
+            catch (Exception ex)
+            {
+                await new MessageDialog("请检查网络连接").ShowAsync();
+                return;
+            }
+            finally
+            {
+                statusBar.ProgressIndicator.ProgressValue = 0;
+                statusBar.ProgressIndicator.Text = "";
+                await statusBar.ProgressIndicator.ShowAsync();
+            }
         }
     }
 }

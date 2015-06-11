@@ -45,5 +45,10 @@ namespace hangxiaodian
             // 如果使用由某些模板提供的 NavigationHelper，
             // 则系统会为您处理该事件。
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Login));
+        }
     }
 }
