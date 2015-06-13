@@ -13,7 +13,7 @@
         <Image x:Name="imgHduNameLogo" Source="/Assets/HduNameLogo.png" HorizontalAlignment="Left" Margin="90,200,90,0" VerticalAlignment="Top" />
         <TextBox x:Name="tbxStuNo" HorizontalAlignment="Left" Margin="130,300,30,0" VerticalAlignment="Top" Width="220" InputScope="Number" />
         <PasswordBox x:Name="tbxStuPwd" HorizontalAlignment="Left" Margin="130,350,30,0" VerticalAlignment="Top" Width="220"/>
-        <Button x:Name="button" Content="登录" HorizontalAlignment="Left" Margin="100,430,100,0" VerticalAlignment="Top" Foreground="White" Background="Red" Width="190" Height="70" BorderBrush="#00000000" Click="button_Click"/>
+        <Button x:Name="btnLogin" Content="登录" HorizontalAlignment="Center" Margin="90,430,90,0" VerticalAlignment="Top" Foreground="White" Background="Red" Width="200" Height="70" BorderBrush="#00000000" Click="btnLogin_Click"/>
         <TextBlock x:Name="tbStuNo" HorizontalAlignment="Left" Margin="60,305,0,0" TextWrapping="Wrap" Text="学工号" VerticalAlignment="Top" FontSize="20" FontFamily="Segoe WP"/>
         <TextBlock x:Name="tbPwd" HorizontalAlignment="Left" Margin="40,355,0,0" TextWrapping="Wrap" Text="教务密码" VerticalAlignment="Top" FontSize="20" FontFamily="Segoe WP"/>
     </Grid>

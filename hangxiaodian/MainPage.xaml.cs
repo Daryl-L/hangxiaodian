@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -48,7 +49,12 @@ namespace hangxiaodian
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(Login));
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ApplicationDataCompositeValue userinfo = (ApplicationDataCompositeValue)localSettings.Values["userinfo"];
+            if (userinfo == null)
+            {
+                Frame.Navigate(typeof(Login));
+            }
         }
     }
 }

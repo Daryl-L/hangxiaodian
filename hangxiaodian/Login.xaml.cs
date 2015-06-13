@@ -1,11 +1,15 @@
 ﻿using hangxiaodian.Helper;
+using hangxiaodian.Model.JsonDataModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -42,13 +46,15 @@ namespace hangxiaodian
             statusBar.ForegroundColor = Color.FromArgb(0, 255, 0, 0);
         }
 
-        private async void button_Click(object sender, RoutedEventArgs e)
+        private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
+            tbxStuNo.IsEnabled = tbxStuPwd.IsEnabled = btnLogin.IsEnabled = false;
             string stuNo = tbxStuNo.Text;
             string stuPwd = tbxStuPwd.Password;
             if (stuNo == "")
             {
                 await new MessageDialog("请输入学号").ShowAsync();
+                tbxStuNo.IsEnabled = tbxStuPwd.IsEnabled = btnLogin.IsEnabled = true;
                 return;
             }
             var param = new List<KeyValuePair<string, string>>()
@@ -66,9 +72,10 @@ namespace hangxiaodian
             {
                 res = await httpRequest.Request();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await new MessageDialog("请检查网络连接").ShowAsync();
+                tbxStuNo.IsEnabled = tbxStuPwd.IsEnabled = btnLogin.IsEnabled = true;
                 return;
             }
             finally
@@ -77,6 +84,27 @@ namespace hangxiaodian
                 statusBar.ProgressIndicator.Text = "";
                 await statusBar.ProgressIndicator.ShowAsync();
             }
+            LoginData resObj = null;
+            var jsonObj = new DataContractJsonSerializer(typeof(LoginData));
+            try
+            {
+                resObj = jsonObj.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(res))) as LoginData;
+            }
+            catch (Exception)
+            {
+                await new MessageDialog("数据解析错误，请重新登录").ShowAsync();
+                tbxStuNo.IsEnabled = tbxStuPwd.IsEnabled = btnLogin.IsEnabled = true;
+                return;
+            }
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ApplicationDataCompositeValue userinfo = new ApplicationDataCompositeValue();
+            userinfo["stuNo"] = resObj.mNo;
+            userinfo["name"] = resObj.name;
+            userinfo["department"] = resObj.department;
+            userinfo["office"] = resObj.office;
+            userinfo["jsessionid"] = resObj.jsessionid;
+            localSettings.Values["userinfo"] = userinfo;
+            Frame.Navigate(typeof(MainPage));
         }
     }
 }
